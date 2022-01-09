@@ -1,25 +1,25 @@
 package bitmart
 
 type Config struct {
-	Url string
-	WsUrl string
-	ApiKey string
-	SecretKey string
-	Memo string
+	Url           string
+	WsUrl         string
+	ApiKey        string
+	SecretKey     string
+	Memo          string
 	TimeoutSecond int
-	IsPrint bool
+	IsPrint       bool
 }
 
 type CloudResponse struct {
 	httpStatus int
-	response string
-	limit RateLimit
+	response   string
+	limit      RateLimit
 }
 
 type RateLimit struct {
 	remaining int
-	limit int
-	reset int
+	limit     int
+	reset     int
 }
 
 type Auth int
@@ -30,10 +30,9 @@ const (
 	SIGNED Auth = 2
 )
 
-
 const (
-	API_URL_PRO  = "https://api-cloud.bitmart.com"
-	WS_URL       = "wss://ws-manager-compress.bitmart.com?protocol=1.1"
+	API_URL_PRO = "https://api-cloud.bitmart.com"
+	WS_URL      = "wss://ws-manager-compress.bitmart.com?protocol=1.1"
 
 	X_BM_KEY       = "X-BM-KEY"
 	X_BM_SIGN      = "X-BM-SIGN"
@@ -43,7 +42,6 @@ const (
 	ACCEPT       = "Accept"
 	USER_AGENT   = "User-Agent"
 	VERSION      = "BitMart-GO-SDK/1.0.1"
-
 
 	APPLICATION_JSON      = "application/json"
 	APPLICATION_JSON_UTF8 = "application/json; charset=UTF-8"
@@ -86,7 +84,7 @@ const (
 	API_CONTRACT_CURRENCIES_URL        = "/contract/v1/ifcontract/contracts"
 	API_CONTRACT_PNLS_URL              = "/contract/v1/ifcontract/pnls"
 	API_CONTRACT_INDEXES_URL           = "/contract/v1/ifcontract/indexes"
-	API_CONTRACT_TICKERS_URL           = "/contract/v1/ifcontract/tickers"
+	API_CONTRACT_TICKERS_URL           = "/contract/v1/tickers"
 	API_CONTRACT_QUOTE_URL             = "/contract/v1/ifcontract/quote"
 	API_CONTRACT_INDEX_QUOTE_URL       = "/contract/v1/ifcontract/indexquote"
 	API_CONTRACT_TRADES_URL            = "/contract/v1/ifcontract/trades"
@@ -125,6 +123,4 @@ const (
 
 	// spot user
 	WS_USER_SPOT_ORDER = "spot/user/order"
-
-
 )
