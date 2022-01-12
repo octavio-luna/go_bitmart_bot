@@ -21,8 +21,6 @@ type ApiMessage struct {
 	Message string `json:"message"`
 }
 
-
-
 /*
  Get a http client
 */
@@ -38,7 +36,6 @@ func NewClient(config Config) *CloudClient {
 	}
 	return &client
 }
-
 
 /*
 Send a GET http request without params
@@ -90,7 +87,7 @@ func (cloudClient *CloudClient) Request(method string, requestPath string, param
 		if params != nil {
 			jsonBody, binBody, err = ParseRequestParams(params)
 			if err != nil {
-				return response,  err
+				return response, err
 			}
 		}
 	}
@@ -120,7 +117,6 @@ func (cloudClient *CloudClient) Request(method string, requestPath string, param
 		fmt.Println("---------------------------------------------")
 		PrintRequest(request, jsonBody)
 	}
-
 
 	// send a request to remote server, and get a response
 	response, err = cloudClient.HttpClient.Do(request)

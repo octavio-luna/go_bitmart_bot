@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -18,7 +19,7 @@ func cargar() (user string, password string, port string, name string) {
 	scanner.Scan()
 	user = scanner.Text()
 
-	fmt.Println("Ingrese el password de %s: ", user)
+	fmt.Printf("Ingrese el password de %s: ", user)
 	scanner.Scan()
 	password = scanner.Text()
 
@@ -122,11 +123,24 @@ type Tag struct {
 	secretkey string `json:"secretkey"`
 }
 
-type TickerSymbol struct {
-	message string `json:"message"`
-	code    string `json:"code"`
-	trace   string `json:"trace"`
-	data    string `json:"data"`
+type Ticker struct {
+	Message string `json:"message"`
+	Code    int    `json:"code"`
+	Trace   string `json:"trace"`
+	Data    struct {
+		Tickers []struct {
+			ContractSymbol        string `json:"contract_symbol"`
+			LastPrice             string `json:"last_price"`
+			IndexPrice            string `json:"index_price"`
+			LastFundingRate       string `json:"last_funding_rate"`
+			PriceChangePercent24H string `json:"price_change_percent_24h"`
+			Volume24H             string `json:"volume_24h"`
+			URL                   string `json:"url"`
+			HighPrice             string `json:"high_price"`
+			LowPrice              string `json:"low_price"`
+			LegalCoinPrice        string `json:"legal_coin_price"`
+		} `json:"tickers"`
+	} `json:"data"`
 }
 
 func main() {
@@ -142,21 +156,23 @@ func main() {
 		IsPrint:       true,
 	})
 
-	var ac, err = client.GetContractTickersBySymbol("BTCUSDT")
+	var ac, err, resp = client.GetContractTickersBySymbol("BTCUSDT")
 	if err != nil {
 		log.Panic(err)
-	} else {
-		bitmart.PrintResponse(ac)
 	}
-
-	var ticker TickerSymbol
-
-	// err = json.Unmarshal([]byte(*ac), &ticker)
-	// if err != nil {
-	// 	fmt.Println(err)
+	//  else {
+	// 	bitmart.PrintResponse(ac)
 	// }
 
-	fmt.Printf("%+v\n", ticker)
+	var ticker Ticker
+	err = json.Unmarshal([]byte(resp), &ticker)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Println(resp)
+	fmt.Println(ticker.Data.Tickers[0].PriceChangePercent24H)
 
 	fmt.Println("completado")
 

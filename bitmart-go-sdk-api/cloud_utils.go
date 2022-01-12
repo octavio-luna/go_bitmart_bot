@@ -13,7 +13,6 @@ import (
 	"time"
 )
 
-
 /*
  Get a UTC-0 timeZ
 */
@@ -28,10 +27,9 @@ func PreHashString(timestamp string, memo string, body string) string {
 	return fmt.Sprintf("%s#%s#%s", timestamp, memo, body)
 }
 
-
 /**
-   Sha256
- */
+  Sha256
+*/
 func HmacSha256Base64Signer(message string, secretKey string) (string, error) {
 	mac := hmac.New(sha256.New, []byte(secretKey))
 	_, err := mac.Write([]byte(message))
@@ -81,12 +79,12 @@ func InterfaceToString(inter interface{}) string {
 		return Int64ToString(inter.(int64))
 	}
 
-	return "";
+	return ""
 }
 
 /**
-	params
- */
+params
+*/
 func NewParams() map[string]interface{} {
 	return make(map[string]interface{})
 }
@@ -110,7 +108,7 @@ func CreateQueryString(params map[string]interface{}) string {
 
 /**
   add header
- */
+*/
 func Headers(request *http.Request, apiKey string, timestamp string, sign string) {
 	request.Header.Add(ACCEPT, APPLICATION_JSON)
 	request.Header.Add(CONTENT_TYPE, APPLICATION_JSON_UTF8)
@@ -129,13 +127,11 @@ func Headers(request *http.Request, apiKey string, timestamp string, sign string
 	}
 }
 
-
 func PrintRequest(request *http.Request, body string) {
 	fmt.Println("[" + request.Method + "] url:[" + request.URL.String() + "]")
-	fmt.Printf("\tHeader: %s\n" , request.Header)
+	fmt.Printf("\tHeader: %s\n", request.Header)
 	fmt.Println("\tBody: " + body)
 }
-
 
 func PrintResponse(response *CloudResponse) {
 	fmt.Println("\tResponse: ")
@@ -147,7 +143,6 @@ func PrintResponse(response *CloudResponse) {
 	fmt.Printf("\t\t\tRemaining: %d\n", response.limit.remaining)
 }
 
-
 func CreateChannel(channel string, symbol string) string {
 	return fmt.Sprintf("%s:%s", channel, symbol)
 }
@@ -158,5 +153,3 @@ func CreateSubscribeParam(channels []string) ([]byte, error) {
 		Args: channels,
 	})
 }
-
-

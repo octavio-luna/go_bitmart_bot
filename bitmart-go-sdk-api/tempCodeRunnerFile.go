@@ -17,7 +17,7 @@ func main() {
 
 	ws := bitmart.NewWS(bitmart.Config{
 		WsUrl:         "wss://ws-manager-compress.bitmart.com/?protocol=1.1",
-		ApiKey:        "560f59dfee72957f93b95c3300f38f6c03b2b0a0",
+		ApiKey:        "560f59dfee72957f93b95c00f38f6c03b2b0a0",
 		SecretKey:     "7c42ebe0245b6d410343a55cdab54ca4d2a72c2b62704c4b075e5a888da8723f",
 		Memo:          "qwertyuiop",
 		TimeoutSecond: 10,
