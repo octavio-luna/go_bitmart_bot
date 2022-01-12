@@ -1,6 +1,5 @@
 package bitmart
 
-
 func (cloudClient *CloudClient) GetSystemTime() (*CloudResponse, error) {
 	var cloudResponse CloudResponse
 
@@ -20,5 +19,3 @@ func (cloudClient *CloudClient) GetSystemService() (*CloudResponse, error) {
 
 	return &cloudResponse, nil
 }
-
-
