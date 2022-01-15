@@ -89,13 +89,9 @@ func main() {
 			currencies[x].PriceToBuy = currencies[x].PriceToSell - currencies[x].PriceDecreaseToBuyBack
 		} else {
 			p := float32(currencies[x].PriceDecreaseToBuyBack)
-			p = (p / 100) + 1
+			p = 1 - (p / 100)
 			currencies[x].PriceToBuy = p * currencies[x].InitialPrice
 		}
-	}
-
-	for x := 0; x < len(currencies); x++ {
-		fmt.Println(currencies[x])
 	}
 
 	x := 0
@@ -116,7 +112,18 @@ func main() {
 				fmt.Printf("%s has no available founds \n", currencies[pos].Symbol)
 				break
 			} else {
-				//buy
+				size := amount * float32((currencies[pos].PercentSellable / 100))
+				_, resp, err := client.PostSpotSubmitMarketSellOrder(bitmart.MarketSellOrder{Symbol: fmt.Sprintf("%s_USDT", currencies[pos].Symbol), Size: fmt.Sprintf("%f", size)})
+				if err != nil {
+					panic(err.Error())
+				}
+				var order bitmart.Order
+				err = json.Unmarshal([]byte(resp), &order)
+				if err != nil {
+					panic(err.Error())
+				}
+				fmt.Println("Order id: ", order.Data.OrderID)
+				//Insert value into DB
 				currencies[pos].PriceToSell = -1
 			}
 		}
@@ -129,11 +136,20 @@ func main() {
 				fmt.Printf("%s has no available founds \n", currencies[pos].Symbol)
 				break
 			} else {
-				//buy
+				_, resp, err := client.PostSpotSubmitMarketBuyOrder(bitmart.MarketBuyOrder{Symbol: fmt.Sprintf("%s_USDT", currencies[pos].Symbol)})
+				if err != nil {
+					panic(err.Error())
+				}
+				var order bitmart.Order
+				err = json.Unmarshal([]byte(resp), &order)
+				if err != nil {
+					panic(err.Error())
+				}
+				fmt.Println("Order id: ", order.Data.OrderID)
 				currencies[pos].PercentSellable = 0
 			}
 		}
-
+		x++
 	}
 
 	_, now, err := client.GetSystemTime()

@@ -70,6 +70,15 @@ type Data struct {
 	ServerTime int64 `json:"server_time"`
 }
 
+type Order struct {
+	Code    int    `json:"code"`
+	Trace   string `json:"trace"`
+	Message string `json:"message"`
+	Data    struct {
+		OrderID int `json:"order_id"`
+	} `json:"data"`
+}
+
 type Auth int
 
 const (

@@ -107,13 +107,14 @@ type MarketBuyOrder struct {
 	Notional string `json:"notional"`
 }
 
-func (cloudClient *CloudClient) PostSpotSubmitMarketBuyOrder(order MarketBuyOrder) (*CloudResponse, error) {
+func (cloudClient *CloudClient) PostSpotSubmitMarketBuyOrder(order MarketBuyOrder) (*CloudResponse, string, error) {
 	params := NewParams()
 	params["symbol"] = order.Symbol
 	params["side"] = "buy"
 	params["type"] = "market"
 	params["notional"] = order.Notional
-	return cloudClient.requestWithParams(POST, API_SPOT_SUBMIT_ORDER_URL, params, SIGNED)
+	cr, err := cloudClient.requestWithParams(POST, API_SPOT_SUBMIT_ORDER_URL, params, SIGNED)
+	return cr, cr.response, err
 }
 
 type MarketSellOrder struct {
@@ -121,13 +122,14 @@ type MarketSellOrder struct {
 	Size   string `json:"size"`
 }
 
-func (cloudClient *CloudClient) PostSpotSubmitMarketSellOrder(order MarketSellOrder) (*CloudResponse, error) {
+func (cloudClient *CloudClient) PostSpotSubmitMarketSellOrder(order MarketSellOrder) (*CloudResponse, string, error) {
 	params := NewParams()
 	params["symbol"] = order.Symbol
 	params["side"] = "sell"
 	params["type"] = "market"
 	params["size"] = order.Size
-	return cloudClient.requestWithParams(POST, API_SPOT_SUBMIT_ORDER_URL, params, SIGNED)
+	cr, err := cloudClient.requestWithParams(POST, API_SPOT_SUBMIT_ORDER_URL, params, SIGNED)
+	return cr, cr.response, err
 }
 
 // cancel_order
