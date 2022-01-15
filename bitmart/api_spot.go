@@ -138,7 +138,6 @@ func (cloudClient *CloudClient) PostSpotCancelOrder(symbol string, orderId int64
 	return cloudClient.requestWithParams(POST, API_SPOT_CANCEL_ORDER_URL, params, SIGNED)
 }
 
-
 // cancel_orders
 func (cloudClient *CloudClient) PostSpotCancelOrders(symbol string, side string) (*CloudResponse, error) {
 	params := NewParams()
@@ -155,7 +154,6 @@ func (cloudClient *CloudClient) GetSpotOrderDetail(symbol string, orderId int64)
 	return cloudClient.requestWithParams(GET, API_SPOT_ORDER_DETAIL_URL, params, KEYED)
 }
 
-
 // orders
 func (cloudClient *CloudClient) GetSpotOrders(symbol string, offset int, limit int, status string) (*CloudResponse, error) {
 	params := NewParams()
@@ -165,7 +163,6 @@ func (cloudClient *CloudClient) GetSpotOrders(symbol string, offset int, limit i
 	params["status"] = status
 	return cloudClient.requestWithParams(GET, API_SPOT_ORDERS_URL, params, KEYED)
 }
-
 
 // trades
 func (cloudClient *CloudClient) GetSpotHistoryTrades(symbol string, offset int, limit int) (*CloudResponse, error) {

@@ -1,6 +1,12 @@
 package bitmart
 
-const EXCHANGE  = "bitmart"
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
+
+const EXCHANGE = "bitmart"
 
 // contracts
 func (cloudClient *CloudClient) GetContractAllContracts() (*CloudResponse, error) {
@@ -16,7 +22,6 @@ func (cloudClient *CloudClient) GetContractContracts(contractId int) (*CloudResp
 	return cloudClient.requestWithParams(GET, API_CONTRACT_CURRENCIES_URL, params, NONE)
 }
 
-
 // pnls
 func (cloudClient *CloudClient) GetContractPnls(contractId int) (*CloudResponse, error) {
 	params := NewParams()
@@ -24,16 +29,36 @@ func (cloudClient *CloudClient) GetContractPnls(contractId int) (*CloudResponse,
 	return cloudClient.requestWithParams(GET, API_CONTRACT_PNLS_URL, params, NONE)
 }
 
-
 // indexes
 func (cloudClient *CloudClient) GetContractIndexes() (*CloudResponse, error) {
 	return cloudClient.requestWithoutParams(GET, API_CONTRACT_INDEXES_URL, NONE)
 }
 
-
 // tickers
 func (cloudClient *CloudClient) GetContractTickers() (*CloudResponse, error) {
 	return cloudClient.requestWithoutParams(GET, API_CONTRACT_TICKERS_URL, NONE)
+}
+
+func (cloudClient *CloudClient) GetContractTickersBySymbol(symbol string) (*CloudResponse, string, error) {
+	cr, err := cloudClient.requestWithoutParams(GET, fmt.Sprintf("/spot/v1/ticker?symbol=%s_USDT", symbol), NONE)
+	return cr, cr.response, err
+}
+
+func (cloudClient *CloudClient) GetActualPriceSymbol(symbol string) (float32, error) {
+	cr, err := cloudClient.requestWithoutParams(GET, fmt.Sprintf("/spot/v1/ticker?symbol=%s_USDT", symbol), NONE)
+	if err != nil {
+		return 0, err
+	}
+	var ticker Ticker
+	err = json.Unmarshal([]byte(cr.response), &ticker)
+	if err != nil {
+		return 0, err
+	}
+	price, err := strconv.ParseFloat(ticker.Data.Tickers[0].BestAsk, 32)
+	if err != nil {
+		return 0, err
+	}
+	return float32(price), err
 }
 
 func (cloudClient *CloudClient) GetContractTickersByContractId(contractId int) (*CloudResponse, error) {
@@ -41,7 +66,6 @@ func (cloudClient *CloudClient) GetContractTickersByContractId(contractId int) (
 	params["contractID"] = contractId
 	return cloudClient.requestWithParams(GET, API_CONTRACT_TICKERS_URL, params, NONE)
 }
-
 
 // quote
 func (cloudClient *CloudClient) GetContractQuote(contractId int, startTime int, endTime int, unit int, resolution string) (*CloudResponse, error) {
@@ -53,7 +77,6 @@ func (cloudClient *CloudClient) GetContractQuote(contractId int, startTime int, 
 	params["resolution"] = resolution
 	return cloudClient.requestWithParams(GET, API_CONTRACT_QUOTE_URL, params, NONE)
 }
-
 
 // index quote
 func (cloudClient *CloudClient) GetContractIndexQuote(indexId int, startTime int, endTime int, unit int, resolution string) (*CloudResponse, error) {
@@ -175,14 +198,12 @@ func (cloudClient *CloudClient) PostContractCancelOrders(cancelOrders []CancelOr
 	return cloudClient.requestWithParams(POST, API_CONTRACT_CANCEL_ORDERS_URL, params, SIGNED)
 }
 
-
 // accounts
 func (cloudClient *CloudClient) GetContractAccounts(coinCode string) (*CloudResponse, error) {
 	params := NewParams()
 	params["coinCode"] = coinCode
 	return cloudClient.requestWithParams(GET, API_CONTRACT_ACCOUNTS_URL, params, KEYED)
 }
-
 
 // userPositions
 func (cloudClient *CloudClient) GetContractUserPositions(contractId int) (*CloudResponse, error) {

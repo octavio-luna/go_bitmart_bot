@@ -2,15 +2,13 @@ package bitmart
 
 import (
 	"bytes"
-	_ "bytes"
 	"compress/flate"
-	_ "compress/flate"
 	"encoding/json"
 	"errors"
-	"github.com/gorilla/websocket"
 	"io/ioutil"
-	_ "io/ioutil"
 	"time"
+
+	"github.com/gorilla/websocket"
 
 	"log"
 	"os"
@@ -22,15 +20,15 @@ import (
 )
 
 type CloudWS struct {
-	Config  Config
-	Conn    *websocket.Conn
+	Config Config
+	Conn   *websocket.Conn
 
-	readMessage  Callback
-	close        chan interface{}
-	signal       chan os.Signal
-	reconnectUseChannels  []string
-	reconnectUseLogin     bool
-	isClose               bool
+	readMessage          Callback
+	close                chan interface{}
+	signal               chan os.Signal
+	reconnectUseChannels []string
+	reconnectUseLogin    bool
+	isClose              bool
 
 	processMut sync.Mutex
 }
@@ -67,7 +65,6 @@ func (ws *CloudWS) Connection(callback Callback) error {
 	return nil
 }
 
-
 // Support public channel and private channel
 func (ws *CloudWS) SubscribeWithLogin(channels []string) {
 	if err := ws.login(); err != nil {
@@ -97,8 +94,6 @@ func (ws *CloudWS) SubscribeWithoutLogin(channels []string) {
 	}
 
 }
-
-
 
 type OpParam struct {
 	Op   string   `json:"op"`
@@ -146,7 +141,6 @@ func (ws *CloudWS) login() error {
 	return nil
 }
 
-
 func (ws *CloudWS) subscribe(opParam OpParam) error {
 	message, err := json.Marshal(opParam)
 	if err != nil {
@@ -169,7 +163,6 @@ func (ws *CloudWS) subscribe(opParam OpParam) error {
 	return nil
 }
 
-
 func (ws *CloudWS) stop() {
 	defer func() {
 		a := recover()
@@ -187,9 +180,8 @@ func (ws *CloudWS) gzipDecode(in []byte) ([]byte, error) {
 	return ioutil.ReadAll(reader)
 }
 
-
 func (ws *CloudWS) reconnection() {
-	time.Sleep(time.Duration(2)*time.Second)
+	time.Sleep(time.Duration(2) * time.Second)
 
 	log.Printf("Reconnecting to %s", ws.Config.WsUrl)
 	c, _, err := websocket.DefaultDialer.Dial(ws.Config.WsUrl, nil)
@@ -210,7 +202,6 @@ func (ws *CloudWS) reconnection() {
 	}
 
 }
-
 
 func (ws *CloudWS) keepalive() {
 	msg := "ping"
@@ -243,7 +234,6 @@ func (ws *CloudWS) work() {
 		}
 	}
 }
-
 
 func (ws *CloudWS) receive() {
 	defer func() {

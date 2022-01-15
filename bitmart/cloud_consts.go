@@ -22,6 +22,54 @@ type RateLimit struct {
 	reset     int
 }
 
+type Ticker struct {
+	Message string `json:"message"`
+	Code    int    `json:"code"`
+	Trace   string `json:"trace"`
+	Data    struct {
+		Tickers []struct {
+			Symbol         string `json:"symbol"`
+			LastPrice      string `json:"last_price"`
+			QuoteVolume24H string `json:"quote_volume_24h"`
+			BaseVolume24H  string `json:"base_volume_24h"`
+			High24H        string `json:"high_24h"`
+			Low24H         string `json:"low_24h"`
+			Open24H        string `json:"open_24h"`
+			Close24H       string `json:"close_24h"`
+			BestAsk        string `json:"best_ask"`
+			BestAskSize    string `json:"best_ask_size"`
+			BestBid        string `json:"best_bid"`
+			BestBidSize    string `json:"best_bid_size"`
+			Fluctuation    string `json:"fluctuation"`
+			URL            string `json:"url"`
+		} `json:"tickers"`
+	} `json:"data"`
+}
+
+type Wallet struct {
+	Message string `json:"message"`
+	Code    int    `json:"code"`
+	Trace   string `json:"trace"`
+	Data    struct {
+		Wallet []struct {
+			Currency  string `json:"currency"`
+			Name      string `json:"name"`
+			Available string `json:"available"`
+			Frozen    string `json:"frozen"`
+		} `json:"wallet"`
+	} `json:"data"`
+}
+
+type Time struct {
+	Message string `json:"message"`
+	Code    int    `json:"code"`
+	Trace   string `json:"trace"`
+	Data    Data   `json:"data"`
+}
+type Data struct {
+	ServerTime int64 `json:"server_time"`
+}
+
 type Auth int
 
 const (

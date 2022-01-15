@@ -5,11 +5,10 @@ import (
 	"testing"
 )
 
-
 // GET https://api-cloud.bitmart.com/system/time
 func TestGetSystemTime(t *testing.T) {
 	c := NewTestClient()
-	ac, err := c.GetSystemTime()
+	ac, _, err := c.GetSystemTime()
 	if err != nil {
 		log.Panic(err)
 	} else {
@@ -27,6 +26,3 @@ func TestGetSystemService(t *testing.T) {
 		PrintResponse(ac)
 	}
 }
-
-
-

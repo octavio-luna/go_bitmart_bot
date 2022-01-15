@@ -1,5 +1,10 @@
 package bitmart
 
+import (
+	"encoding/json"
+	"strconv"
+)
+
 // account/v1/currencies
 func (cloudClient *CloudClient) GetAccountCurrencies() (*CloudResponse, error) {
 	return cloudClient.requestWithoutParams(GET, API_ACCOUNT_CURRENCIES_URL, NONE)
@@ -10,6 +15,35 @@ func (cloudClient *CloudClient) GetAccountWallet(accountType string) (*CloudResp
 	params := NewParams()
 	params["account_type"] = accountType
 	return cloudClient.requestWithParams(GET, API_ACCOUNT_WALLET_URL, params, KEYED)
+}
+
+func (cloudClient *CloudClient) GetAccountWalletToString(accountType string) (*CloudResponse, string, error) {
+	params := NewParams()
+	params["account_type"] = accountType
+	cr, err := cloudClient.requestWithParams(GET, API_ACCOUNT_WALLET_URL, params, KEYED)
+	return cr, cr.response, err
+}
+
+func (cloudClient *CloudClient) GetAvailableAsset(symbol string) (float32, error) {
+	params := NewParams()
+	params["account_type"] = "1"
+	cr, err := cloudClient.requestWithParams(GET, API_ACCOUNT_WALLET_URL, params, KEYED)
+	if err != nil {
+		return -1, err
+	}
+
+	var wallet Wallet
+	err = json.Unmarshal([]byte(cr.response), &wallet)
+	for x := 0; x < len(wallet.Data.Wallet); x++ {
+		if wallet.Data.Wallet[x].Name == symbol {
+			amount, err := strconv.ParseFloat(wallet.Data.Wallet[x].Available, 32)
+			if err != nil {
+				return -1, err
+			}
+			return float32(amount), nil
+		}
+	}
+	return -1, err
 }
 
 // deposit/address
@@ -48,8 +82,8 @@ func (cloudClient *CloudClient) PostAccountWithdrawApply(apply WithdrawApply) (*
 type HistoryApply struct {
 	Currency      string `json:"currency"`
 	OperationType string `json:"operation_type"`
-	Offset        int `json:"offset"`
-	Limit         int `json:"limit"`
+	Offset        int    `json:"offset"`
+	Limit         int    `json:"limit"`
 }
 
 // deposit-withdraw/history
@@ -68,4 +102,3 @@ func (cloudClient *CloudClient) GetDepositWithdrawDetail(id int64) (*CloudRespon
 	params["id"] = id
 	return cloudClient.requestWithParams(GET, API_ACCOUNT_DEPOSIT_WITHDRAW_DETAIL_URL, params, KEYED)
 }
-
