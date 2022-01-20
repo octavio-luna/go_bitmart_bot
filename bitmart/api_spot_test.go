@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-const TEST_SYMBOL  = "BTC_USDT"
+const TEST_SYMBOL = "BTC_USDT"
 
 // GET https://api-cloud.bitmart.com/spot/v1/currencies
 func TestGetSpotCurrencies(t *testing.T) {
@@ -123,7 +123,7 @@ func TestGetSpotWallet(t *testing.T) {
 //POST https://api-cloud.bitmart.com/spot/v1/submit_order
 func TestPostSpotSubmitLimitBuyOrder(t *testing.T) {
 	c := NewTestClient()
-	ac, err := c.PostSpotSubmitLimitBuyOrder(LimitBuyOrder{Symbol:TEST_SYMBOL, Size:"8800", Price:"0.01"})
+	ac, err := c.PostSpotSubmitLimitBuyOrder(LimitBuyOrder{Symbol: TEST_SYMBOL, Size: "8800", Price: "0.01"})
 	if err != nil {
 		log.Panic(err)
 	} else {
@@ -133,7 +133,7 @@ func TestPostSpotSubmitLimitBuyOrder(t *testing.T) {
 
 func TestPostSpotSubmitLimitSellOrder(t *testing.T) {
 	c := NewTestClient()
-	ac, err := c.PostSpotSubmitLimitSellOrder(LimitSellOrder{Symbol:TEST_SYMBOL, Size:"10050", Price:"1"})
+	ac, err := c.PostSpotSubmitLimitSellOrder(LimitSellOrder{Symbol: TEST_SYMBOL, Size: "10050", Price: "1"})
 	if err != nil {
 		log.Panic(err)
 	} else {
@@ -143,26 +143,23 @@ func TestPostSpotSubmitLimitSellOrder(t *testing.T) {
 
 func TestPostSpotSubmitMarketBuyOrder(t *testing.T) {
 	c := NewTestClient()
-	ac, err := c.PostSpotSubmitMarketBuyOrder(MarketBuyOrder{Symbol:TEST_SYMBOL, Notional:"1000"})
+	ac, _, err := c.PostSpotSubmitMarketBuyOrder(MarketBuyOrder{Symbol: TEST_SYMBOL, Notional: "1000"})
 	if err != nil {
 		log.Panic(err)
 	} else {
 		PrintResponse(ac)
 	}
 }
-
 
 func TestPostSpotSubmitMarketSellOrder(t *testing.T) {
 	c := NewTestClient()
-	ac, err := c.PostSpotSubmitMarketSellOrder(MarketSellOrder{Symbol:TEST_SYMBOL, Size:"1"})
+	ac, _, err := c.PostSpotSubmitMarketSellOrder(MarketSellOrder{Symbol: TEST_SYMBOL, Size: "1"})
 	if err != nil {
 		log.Panic(err)
 	} else {
 		PrintResponse(ac)
 	}
 }
-
-
 
 // POST https://api-cloud.bitmart.com/spot/v2/cancel_order
 func TestPostSpotCancelOrder(t *testing.T) {
@@ -207,7 +204,6 @@ func TestGetSpotOrders(t *testing.T) {
 		PrintResponse(ac)
 	}
 }
-
 
 // GET https://api-cloud.bitmart.com/spot/v1/trades
 func TestGetSpotHistoryTrades(t *testing.T) {

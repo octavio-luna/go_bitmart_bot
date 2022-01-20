@@ -3,18 +3,17 @@ package bitmart
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"strconv"
 )
 
 type Currency struct {
-	Symbol                      string
-	InitialPrice                float32
-	PercentSellable             int
-	PriceIncreaseToSell         float32
-	PercentageIncreaseToSell    int
-	PriceToSell                 float32
-	PercentageDecreaseToBuyBack int
-	PriceDecreaseToBuyBack      float32
-	PriceToBuy                  float32
+	Symbol         string
+	InitialPrice   float32
+	AmountSellable float32
+	PriceToSell    []float32
+	PriceToBuy     []float32
+	DollarsToBuy   float32
 }
 
 func CreateCurrency(client *CloudClient) Currency {
@@ -42,6 +41,23 @@ func CreateCurrency(client *CloudClient) Currency {
 	var c Currency
 	c.Symbol = symbol
 
+	//Set the initial price
+	_, resp, err := client.GetContractTickersBySymbol(c.Symbol)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	var ticker Ticker
+	err = json.Unmarshal([]byte(resp), &ticker)
+	if err != nil {
+		panic(err.Error())
+	}
+	price, err := strconv.ParseFloat(ticker.Data.Tickers[0].BestAsk, 32)
+	if err != nil {
+		panic(err.Error())
+	}
+	c.InitialPrice = float32(price)
+
 	//Set the sellable percentage of the currency
 	for ok := true; ok; ok = (check <= 0 || check > 100) {
 		fmt.Println("Type the percentage of the currency you want to sell: ")
@@ -50,7 +66,23 @@ func CreateCurrency(client *CloudClient) Currency {
 			fmt.Print("Error. ")
 		}
 	}
-	c.PercentSellable = check
+
+	amount, err := client.GetAvailableAsset(c.Symbol)
+	if err != nil {
+		panic(err.Error())
+	}
+	if amount <= 0 {
+		fmt.Println(price, c.PriceToSell, c.InitialPrice)
+		fmt.Printf("%s has no available founds \n", c.Symbol)
+		var cur Currency
+		cur.Symbol = "nil"
+		return cur
+	} else {
+		p := float32(check)
+		p = (p / 100)
+		amount = amount * p
+	}
+	c.AmountSellable = amount
 
 	//Set to sell by either a price or a percentage increase
 	for ok := true; ok; ok = (check != 1 && check != 2) {
@@ -66,8 +98,9 @@ func CreateCurrency(client *CloudClient) Currency {
 				fmt.Print("Error. ")
 			}
 		}
-		c.PercentageIncreaseToSell = check
-		c.PriceIncreaseToSell = -1
+		p := float32(check)
+		p = (p / 100) + 1
+		c.PriceToSell[0] = p * c.InitialPrice
 	} else {
 		var ch float32
 		for ok := true; ok; ok = (ch <= 0) {
@@ -77,8 +110,21 @@ func CreateCurrency(client *CloudClient) Currency {
 				fmt.Print("Error. ")
 			}
 		}
-		c.PriceIncreaseToSell = ch
-		c.PercentageIncreaseToSell = -1
+		c.PriceToSell[0] = c.InitialPrice + float32(ch)
+	}
+
+	for ok := true; ok; ok = (check < 1 || check > 5) {
+		fmt.Println("In how many steps is the operation going to be be made? (max 5) ")
+		fmt.Scanln(&check)
+		if check < 1 || check > 5 {
+			fmt.Print("Error. ")
+		}
+	}
+
+	diff := c.PriceToSell[0] - c.InitialPrice
+	for x := 1; x < check; x++ {
+		c.PriceToSell[x] = c.PriceToSell[x-1] - (diff / 2)
+		diff = diff / 2
 	}
 
 	//Set to buy by either a price or a percentage increase
@@ -95,8 +141,9 @@ func CreateCurrency(client *CloudClient) Currency {
 				fmt.Print("Error. ")
 			}
 		}
-		c.PercentageDecreaseToBuyBack = check
-		c.PriceDecreaseToBuyBack = -1
+		p := float32(check)
+		p = 1 - (p / 100)
+		c.PriceToBuy[0] = p * c.InitialPrice
 	} else {
 		var ch float32
 		for ok := true; ok; ok = (ch <= 0) {
@@ -106,9 +153,24 @@ func CreateCurrency(client *CloudClient) Currency {
 				fmt.Print("Error. ")
 			}
 		}
-		c.PriceDecreaseToBuyBack = ch
-		c.PercentageDecreaseToBuyBack = -1
+		c.PriceToBuy[0] = c.PriceToSell[0] - ch
 	}
+
+	for ok := true; ok; ok = (check < 1 || check > 5) {
+		fmt.Println("In how many steps is the operation going to be made? (max 5) ")
+		fmt.Scanln(&check)
+		if check < 1 || check > 5 {
+			fmt.Print("Error. ")
+		}
+	}
+
+	diff = c.PriceToBuy[0] - c.InitialPrice
+	for x := 1; x < check; x++ {
+		c.PriceToBuy[x] = c.PriceToBuy[x-1] - (diff / 2)
+		diff = diff / 2
+	}
+
+	c.DollarsToBuy = 0
 
 	return c
 }

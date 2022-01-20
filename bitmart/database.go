@@ -15,10 +15,10 @@ type Tag struct {
 	Secretkey string `json:"secretkey"`
 }
 
-//Replace 'user', 'pasword', 'port' and 'name' for your own database credentials and ports
+//Replace 'user', 'pasword' and 'port' for your own database credentials and ports
 func ConnectDB() (db *sql.DB) {
 	scanner := bufio.NewScanner(os.Stdin)
-	user, password, port, name := "root", "Octa2003", "3306", "info"
+	user, password, port, name := "user", "password", "port", "info"
 	fmt.Println("To change the default values press 1: ")
 	scanner.Scan()
 	ch := scanner.Text()
@@ -116,4 +116,11 @@ func GetKey(db *sql.DB) (memo string, apikey string, secretkey string) {
 
 	memo, apikey, secretkey = SearchAPIKey(results)
 	return memo, apikey, secretkey
+}
+
+func InsertConsult(db *sql.DB, symbol string, time string, price float32, op string) {
+	_, err := db.Exec(fmt.Sprintf("Insert into consults (symbol, moment, price, op) values (%s, %s, %f, %s);", symbol, time, price, op))
+	if err != nil {
+		panic(err.Error())
+	}
 }
