@@ -119,7 +119,8 @@ func GetKey(db *sql.DB) (memo string, apikey string, secretkey string) {
 }
 
 func InsertConsult(db *sql.DB, symbol string, time string, price float32, op string) {
-	_, err := db.Exec(fmt.Sprintf("Insert into consults (symbol, moment, price, op) values (%s, %s, %f, %s);", symbol, time, price, op))
+	query := fmt.Sprintf("Insert into consults (symbol, moment, price, op) values ('%s', '%s', %f, '%s')", symbol, time, price, op)
+	_, err := db.Exec(query)
 	if err != nil {
 		panic(err.Error())
 	}
