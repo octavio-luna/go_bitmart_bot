@@ -35,7 +35,7 @@ func (cloudClient *CloudClient) GetAvailableAsset(symbol string) (float32, error
 	var wallet Wallet
 	err = json.Unmarshal([]byte(cr.response), &wallet)
 	for x := 0; x < len(wallet.Data.Wallet); x++ {
-		if wallet.Data.Wallet[x].Name == symbol {
+		if wallet.Data.Wallet[x].Currency == symbol {
 			amount, err := strconv.ParseFloat(wallet.Data.Wallet[x].Available, 32)
 			if err != nil {
 				return -1, err

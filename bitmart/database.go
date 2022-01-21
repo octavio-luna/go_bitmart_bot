@@ -18,7 +18,7 @@ type Tag struct {
 //Replace 'user', 'pasword' and 'port' for your own database credentials and ports
 func ConnectDB() (db *sql.DB) {
 	scanner := bufio.NewScanner(os.Stdin)
-	user, password, port, name := "user", "password", "port", "info"
+	user, password, port, name := "root", "Octa2003", "3306", "info"
 	fmt.Println("To change the default values press 1: ")
 	scanner.Scan()
 	ch := scanner.Text()
