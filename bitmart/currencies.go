@@ -100,7 +100,7 @@ func CreateCurrency(client *CloudClient) Currency {
 		}
 		p := float32(check)
 		p = (p / 100) + 1
-		c.PriceToSell[0] = p * c.InitialPrice
+		c.PriceToSell = append(c.PriceToSell, (p * c.InitialPrice))
 	} else {
 		var ch float32
 		for ok := true; ok; ok = (ch <= 0) {
@@ -110,7 +110,7 @@ func CreateCurrency(client *CloudClient) Currency {
 				fmt.Print("Error. ")
 			}
 		}
-		c.PriceToSell[0] = c.InitialPrice + float32(ch)
+		c.PriceToSell = append(c.PriceToSell, (c.InitialPrice + float32(ch)))
 	}
 
 	for ok := true; ok; ok = (check < 1 || check > 5) {
@@ -123,7 +123,7 @@ func CreateCurrency(client *CloudClient) Currency {
 
 	diff := c.PriceToSell[0] - c.InitialPrice
 	for x := 1; x < check; x++ {
-		c.PriceToSell[x] = c.PriceToSell[x-1] - (diff / 2)
+		c.PriceToSell = append(c.PriceToSell, (c.PriceToSell[x-1] - (diff / 2)))
 		diff = diff / 2
 	}
 
@@ -143,7 +143,7 @@ func CreateCurrency(client *CloudClient) Currency {
 		}
 		p := float32(check)
 		p = 1 - (p / 100)
-		c.PriceToBuy[0] = p * c.InitialPrice
+		c.PriceToBuy = append(c.PriceToBuy, (p * c.InitialPrice))
 	} else {
 		var ch float32
 		for ok := true; ok; ok = (ch <= 0) {
@@ -153,7 +153,7 @@ func CreateCurrency(client *CloudClient) Currency {
 				fmt.Print("Error. ")
 			}
 		}
-		c.PriceToBuy[0] = c.PriceToSell[0] - ch
+		c.PriceToBuy = append(c.PriceToBuy, (c.PriceToSell[0] - ch))
 	}
 
 	for ok := true; ok; ok = (check < 1 || check > 5) {
@@ -166,7 +166,7 @@ func CreateCurrency(client *CloudClient) Currency {
 
 	diff = c.PriceToBuy[0] - c.InitialPrice
 	for x := 1; x < check; x++ {
-		c.PriceToBuy[x] = c.PriceToBuy[x-1] - (diff / 2)
+		c.PriceToBuy = append(c.PriceToBuy, (c.PriceToBuy[x-1] - (diff / 2)))
 		diff = diff / 2
 	}
 
