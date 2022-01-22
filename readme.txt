@@ -9,11 +9,13 @@ secretkey varchar(100),
 memo varchar(100) primary key);
 
 create table consults(
-symbol varchar(50) primary key,
+symbol varchar(50),
 moment varchar(50),
 price float, 
-op varchar(20)
+op varchar(20),
+primary key(symbol, moment)
 );
+
 
 insert into APIconf (memo, apikey, secretkey) values ("nil", "nil", "nil");
 
