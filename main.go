@@ -32,18 +32,32 @@ func main() {
 	var currencies []bitmart.Currency
 
 	var check int
-	for ok := true; ok; ok = (check != 1) {
-		c := bitmart.CreateCurrency(client)
-		if c.Symbol == "nil" {
-			//Do not append, DEBUG function
-		} else {
-			currencies = append(currencies, c)
-		}
 
-		for ok := true; ok; ok = (check != 1 && check != 2) {
-			fmt.Println("Press 1 to finish loading the currencies to check or 2 to load another one: ")
-			fmt.Scanln(&check)
+	for ok := true; ok; ok = (check != 1 && check != 2) {
+		fmt.Println("Type 1 to use the current configuration or 2 to set your own: ")
+		fmt.Scanln(&check)
+		if check != 1 && check != 2 {
+			fmt.Print("Error. ")
 		}
+	}
+
+	if check == 2 {
+		for ok := true; ok; ok = (check != 1) {
+			c := bitmart.CreateCurrency(client)
+			if c.Symbol == "nil" {
+				//Do not append, DEBUG function
+			} else {
+				currencies = append(currencies, c)
+			}
+
+			for ok := true; ok; ok = (check != 1 && check != 2) {
+				fmt.Println("Press 1 to finish loading the currencies to check or 2 to load another one: ")
+				fmt.Scanln(&check)
+			}
+		}
+		bitmart.SetCurrencies(bitmart.OpenFile(), currencies)
+	} else {
+		currencies = bitmart.GetCurrencies(bitmart.OpenFile())
 	}
 
 	x := 0
