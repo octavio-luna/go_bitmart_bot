@@ -33,6 +33,21 @@ func main() {
 
 	var check int
 
+	c := bitmart.GetCurrencies(bitmart.OpenFile())
+	for x := 0; x < len(c); x++ {
+		fmt.Println("The actual configuration is: ")
+		fmt.Printf("Symbol: %s \n", c[x].Symbol)
+		fmt.Printf("InitialPrice: %f \n", c[x].InitialPrice)
+		fmt.Printf("Amount sellable: %f \n", c[x].AmountSellable)
+		for y := 0; y < len(c[x].PriceToSell); y++ {
+			fmt.Printf("Price to sell in step %d: %f\n", y, c[x].PriceToSell[y])
+		}
+		for y := 0; y < len(c[x].PriceToBuy); y++ {
+			fmt.Printf("Price to buy in step %d: %f\n", y, c[x].PriceToBuy[y])
+		}
+		fmt.Printf("The amount of dollars to buy is: %f \n", c[x].DollarsToBuy)
+	}
+
 	for ok := true; ok; ok = (check != 1 && check != 2) {
 		fmt.Println("Type 1 to use the current configuration or 2 to set your own: ")
 		fmt.Scanln(&check)
