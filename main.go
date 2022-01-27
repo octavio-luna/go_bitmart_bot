@@ -82,13 +82,13 @@ func main() {
 			pos := x % len(currencies)
 			price, err := client.GetActualPriceSymbol(currencies[pos].Symbol)
 			if err != nil {
-				panic(err.Error())
+				continue
 			}
 			if len(currencies[pos].PriceToSell) > 0 {
 				if price >= currencies[pos].PriceToSell[len(currencies[pos].PriceToSell)-1] {
 					amount, err := client.GetAvailableAsset(currencies[pos].Symbol)
 					if err != nil {
-						panic(err.Error())
+						continue
 					}
 					if amount < 0 || amount < currencies[pos].AmountSellable {
 						fmt.Println(price, currencies[pos].PriceToSell, currencies[pos].InitialPrice)
@@ -99,12 +99,12 @@ func main() {
 
 						_, resp, err := client.PostSpotSubmitMarketSellOrder(bitmart.MarketSellOrder{Symbol: fmt.Sprintf("%s_USDT", currencies[pos].Symbol), Size: fmt.Sprintf("%f", size)})
 						if err != nil {
-							panic(err.Error())
+							continue
 						}
 						var order bitmart.Order
 						err = json.Unmarshal([]byte(resp), &order)
 						if err != nil {
-							panic(err.Error())
+							continue
 						}
 						fmt.Println("Order id: ", order.Data.OrderID)
 						currencies[pos].AmountSellable = currencies[pos].AmountSellable - size
@@ -113,7 +113,7 @@ func main() {
 
 						_, now, err := client.GetSystemTime()
 						if err != nil {
-							panic(err.Error())
+							continue
 						}
 						bitmart.InsertConsult(db, currencies[pos].Symbol, now, price, "sell")
 					}
@@ -122,7 +122,7 @@ func main() {
 				if price <= currencies[pos].PriceToBuy[len(currencies[pos].PriceToBuy)-1] {
 					amount, err := client.GetAvailableAsset("USDT")
 					if err != nil {
-						panic(err.Error())
+						continue
 					}
 					if amount <= 0 || amount < currencies[pos].DollarsToBuy/float32(len(currencies[pos].PriceToSell)) {
 						fmt.Printf("%s has no available founds \n", currencies[pos].Symbol)
@@ -131,12 +131,12 @@ func main() {
 						value := currencies[pos].DollarsToBuy / float32(len(currencies[pos].PriceToSell))
 						_, resp, err := client.PostSpotSubmitMarketBuyOrder(bitmart.MarketBuyOrder{Symbol: fmt.Sprintf("%s_USDT", currencies[pos].Symbol), Notional: strconv.FormatFloat(float64(value), 'E', -1, 32)})
 						if err != nil {
-							panic(err.Error())
+							continue
 						}
 						var order bitmart.Order
 						err = json.Unmarshal([]byte(resp), &order)
 						if err != nil {
-							panic(err.Error())
+							continue
 						}
 						fmt.Println("Order id: ", order.Data.OrderID)
 						currencies[pos].PriceToBuy = currencies[pos].PriceToBuy[:len(currencies[pos].PriceToBuy)-2]
@@ -144,7 +144,7 @@ func main() {
 
 						_, now, err := client.GetSystemTime()
 						if err != nil {
-							panic(err.Error())
+							continue
 						}
 						bitmart.InsertConsult(db, currencies[pos].Symbol, now, price, "sell")
 					}
@@ -152,7 +152,7 @@ func main() {
 			}
 			_, now, err := client.GetSystemTime()
 			if err != nil {
-				panic(err.Error())
+				continue
 			}
 			bitmart.InsertConsult(db, currencies[pos].Symbol, now, price, "getprice")
 			x++
