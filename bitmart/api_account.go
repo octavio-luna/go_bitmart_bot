@@ -2,6 +2,7 @@ package bitmart
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -35,6 +36,7 @@ func (cloudClient *CloudClient) GetAvailableAsset(symbol string) (float32, error
 	var wallet Wallet
 	err = json.Unmarshal([]byte(cr.response), &wallet)
 	for x := 0; x < len(wallet.Data.Wallet); x++ {
+		fmt.Printf("%s \n %s\n", wallet.Data.Wallet[x].Currency, symbol)
 		if wallet.Data.Wallet[x].Currency == symbol {
 			amount, err := strconv.ParseFloat(wallet.Data.Wallet[x].Available, 32)
 			if err != nil {

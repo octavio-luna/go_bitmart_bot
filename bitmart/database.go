@@ -3,7 +3,9 @@ package bitmart
 import (
 	"bufio"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -124,4 +126,38 @@ func InsertConsult(db *sql.DB, symbol string, time string, price float32, op str
 	if err != nil {
 		panic(err.Error())
 	}
+}
+
+func OpenFile() *os.File {
+	// Open our jsonFile
+	jsonFile, err := os.Open("currencies.json")
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		fmt.Println(err)
+	}
+	return jsonFile
+}
+
+func SetCurrencies(jsonFile *os.File, currencies []Currency) {
+	file, err := json.MarshalIndent(currencies, "", " ")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer jsonFile.Close()
+	err = ioutil.WriteFile("currencies.json", file, 0644)
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+func GetCurrencies(jsonFile *os.File) []Currency {
+	// read our opened jsonFile as a byte array.
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		panic(err.Error())
+	}
+	var currencies []Currency
+	json.Unmarshal(byteValue, &currencies)
+	defer jsonFile.Close()
+	return currencies
 }
